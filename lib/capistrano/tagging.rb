@@ -39,19 +39,19 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     def create_tag(name)
       if tagging_environment?
-        puts `git tag #{name} #{revision} -m "Deployed by #{user_name} <#{user_email}>"`
-        puts `git push #{remote} refs/tags/#{name}:refs/tags/#{name}`
+        run_locally "git tag #{name} #{revision} -m \"Deployed by #{user_name} <#{user_email}>\""
+        run_locally "git push #{remote} refs/tags/#{name}:refs/tags/#{name}"
       else
-        puts "ignored git tagging in #{rails_env} environment"
+        logger.info "ignored git tagging in #{rails_env} environment"
       end
     end
 
     def remove_tag(name)
       if tagging_environment?
-        puts `git tag -d #{name}`
-        puts `git push #{remote} :refs/tags/#{name}`
+        run_locally "git tag -d #{name}"
+        run_locally "git push #{remote} :refs/tags/#{name}"
       else
-        puts "ignored git tagging in #{rails_env} environment"
+        logger.info "ignored git tagging in #{rails_env} environment"
       end
     end
 
