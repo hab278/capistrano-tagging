@@ -48,8 +48,13 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     def remove_tag(name)
       if tagging_environment?
-        run_locally "git tag -d #{name}"
-        run_locally "git push #{remote} :refs/tags/#{name}"
+        run_locally "git tag -d #{name}" do |channel, stream, data|
+          if stream.eql? :err
+            logger.info "Revision #{name} did not have a tag."
+          else
+            run_locally "git push #{remote} :refs/tags/#{name}"
+          end
+        end
       else
         logger.info "ignored git tagging in #{rails_env} environment"
       end
